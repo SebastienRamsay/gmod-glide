@@ -472,6 +472,7 @@ local colors = {
     icon = Color( 255, 255, 255, 255 ),
     iconDisabled = Color( 60, 60, 60, 255 ),
     throttleBar = Glide.THEME_COLOR,
+    fuelBar = Color( 80, 200, 80, 255 ),
     speedBars = Color( 220, 220, 220, 255 ),
 }
 
@@ -482,6 +483,7 @@ end
 
 local size, x, y
 local throttle, needle, speedLerp = 0, 0, 0
+local fuel = 1
 
 --- Override this base class function.
 function ENT:DrawVehicleHUD( screenW, screenH )
@@ -504,9 +506,74 @@ function ENT:DrawVehicleHUD( screenW, screenH )
 
     DrawOutlinedCircle( r * 0.985, x + r, y + r, size * 0.025, colors.throttleBar, 89 * throttle, 361 )
 
+    -- Fuel
+    local fuelNorm = Clamp( ( self:GetFuel() or 0 ) / 100, 0, 1 )
+    fuel = ExpDecay( fuel, fuelNorm, 10, dt )
+
+    local fuelBarColor = colors.fuelBar
+
+    -- Low fuel warning
+    if fuelNorm < 0.3 then
+        -- Smooth pulse from 0-1
+        local pulse = ( math.sin( RealTime() * 6 ) * 0.5 + 0.5 )
+        fuelBarColor.a = Lerp( pulse, 60, 255 )
+    end
+
+    DrawOutlinedCircle(
+        r * 1.1,
+        x + r,
+        y + r,
+        size * 0.04,
+        colors.bg,
+        90,
+        360
+    )
+
+    DrawOutlinedCircle(
+        r * 1.085,
+        x + r,
+        y + r,
+        size * 0.025,
+        colors.fuelBar,
+        89 * fuel,
+        361
+    )
+
     -- Engine state
     local iconSize = size * 0.11
-    DrawIcon( x + size - iconSize, y + size - iconSize * 0.5, "glide/icons/engine.png", iconSize, self:IsEngineOn() and colors.icon or colors.iconDisabled )
+    local engineHealth = self:GetEngineHealth() or 1
+
+    local engineColor
+
+    if self:IsEngineOn() and engineHealth < 0.4 then
+        -- Pulsing yellow warning
+        local pulse = math.sin( RealTime() * 6 ) * 0.5 + 0.5
+        engineColor = Color(
+            255,
+            220,
+            40,
+            Lerp( pulse, 60, 255 )
+        )
+    elseif self:IsEngineOn() and engineHealth < 0.7 then
+        engineColor = Color(
+            255,
+            220,
+            40,
+            255
+        )
+    else
+        -- Normal behavior
+        engineColor = self:IsEngineOn() and colors.icon or colors.iconDisabled
+    end
+
+    DrawIcon(
+        x + size - iconSize,
+        y + size - iconSize * 0.5,
+        "glide/icons/engine.png",
+        iconSize,
+        engineColor
+    )
+
 
     -- Engine RPM
     local stream = self.stream

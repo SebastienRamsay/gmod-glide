@@ -30,6 +30,8 @@ function ENT:OnPostInitialize()
     self:SetEngineRPM( 0 )
     self:SetEngineThrottle( 0 )
 
+    self:SetFuel( 50 )
+
     self:SetTireSmokeColor( Vector( 0.8, 0.8, 0.8 ) )
     self:SetWheelRadius( 15 )
 

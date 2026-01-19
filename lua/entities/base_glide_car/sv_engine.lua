@@ -1,6 +1,13 @@
 function ENT:EngineInit()
     self:UpdateGearList()
 
+    -- fuel tuning (easy to tweak)
+    self.FuelMax = 100
+    self.FuelIdleDrain = 0.002      -- idle burn per second
+    self.FuelRPMDrain = 0.015       -- RPM influence
+    self.FuelLoadDrain = 0.035      -- torque/load influence
+
+
     -- Fake flywheel parameters
     self.flywheelMass = 80
     self.flywheelRadius = 0.5
@@ -31,6 +38,38 @@ function ENT:EngineInit()
     self.avgPoweredRPM = 0
     self.avgForwardSlip = 0
 end
+
+function ENT:ConsumeFuel( dt, rpm, torque, throttle )
+    local fuel = self:GetFuel() or self.FuelMax
+
+    if fuel <= 0 then
+        self:SetFuel( 0 )
+        return false -- out of fuel
+    end
+
+    local maxRPM = self:GetMaxRPM()
+    local maxTorque = self:GetMaxRPMTorque()
+
+    -- Normalize values
+    local rpmNorm = rpm / maxRPM
+    local loadNorm = math.Clamp( torque / maxTorque, 0, 1 )
+
+    -- Fuel usage per second
+    local fuelRate =
+        self.FuelIdleDrain +
+        ( rpmNorm * self.FuelRPMDrain ) +
+        ( loadNorm * throttle * self.FuelLoadDrain )
+
+    if self:GetIsEngineOnFire() then
+        fuelRate = fuelRate * 1.5
+    end
+
+    fuel = math.Clamp( fuel - fuelRate * dt, 0, self.FuelMax )
+    self:SetFuel( fuel )
+
+    return fuel > 0
+end
+
 
 --- Returns a list of available transmission gears.
 --- Unlike `ENT:GetGears()` this will return overrides from
@@ -424,6 +463,23 @@ function ENT:EngineThink( dt, selfTbl )
 
     if selfTbl.burnout > 0 then
         availableTorque = availableTorque + availableTorque * selfTbl.burnout * 0.1
+    end
+
+    -- Fuel consumption
+    local hasFuel = self:ConsumeFuel(
+        dt,
+        rpm,
+        Abs( availableTorque ),
+        throttle
+    )
+
+    -- Kill engine when empty
+    if not hasFuel then
+        self:SetEngineThrottle( 0 )
+        self:SetIsRedlining( false )
+        selfTbl.availableFrontTorque = 0
+        selfTbl.availableRearTorque = 0
+        return
     end
 
     -- Split torque between front and rear wheels

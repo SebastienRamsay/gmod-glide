@@ -41,6 +41,8 @@ function ENT:SetupDataTables()
     self:NetworkVar( "Float", "EngineRPM" )
     self:NetworkVar( "Float", "EngineThrottle" )
 
+    self:NetworkVar( "Float", "Fuel" )
+
     -- All DT variables below this comment are editable properties
     self:NetworkVar( "Vector", "TireSmokeColor", { KeyName = "TireSmokeColor", Edit = { type = "VectorColor", order = 0, category = "#glide.editvar.wheels" } } )
 

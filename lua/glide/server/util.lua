@@ -333,3 +333,25 @@ function Glide.PartialRepair( vehicle, chassisAmount, engineAmount )
 
     return wasHealthIncreased, hasFinished
 end
+
+function Glide.PartialRefuel( vehicle, refuelAmount )
+    if not vehicle.GetFuel then return false, true end
+
+    local maxFuel = vehicle.FuelMax
+    local currentFuel = vehicle:GetFuel()
+
+    local wasFuelIncreased = false
+    local hasFinished = false
+
+    if currentFuel < maxFuel then
+        wasFuelIncreased = true
+        if refuelAmount > ( maxFuel - currentFuel ) then
+            vehicle:SetFuel( maxFuel )
+            hasFinished = true
+        else
+            vehicle:SetFuel( currentFuel + refuelAmount )
+        end
+    end
+
+    return wasFuelIncreased, hasFinished
+end

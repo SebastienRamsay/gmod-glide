@@ -34,8 +34,12 @@ end
 local IsString = isstring
 local Clamp = math.Clamp
 
+local GetVolume = Glide.Config.GetVolume
+
 function ENT:ProcessSound( vehicle, id, surfaceId, soundSet, altSurface, volume, pitch )
     if not self:GetSoundsEnabled() then return end
+
+    volume = volume * GetVolume( "wheelVolume" )
 
     local path = IsString( soundSet ) and soundSet or (
         vehicle:OverrideWheelSound( id, surfaceId ) or soundSet[surfaceId] )

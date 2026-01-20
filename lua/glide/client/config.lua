@@ -5,6 +5,7 @@ function Config:Reset()
     self.version = 2
 
     -- Audio settings
+    self.wheelVolume = 1.0
     self.carVolume = 1.0
     self.aircraftVolume = 1.0
     self.explosionVolume = 1.0
@@ -114,6 +115,7 @@ function Config:Save( immediate )
         version = self.version,
 
         -- Audio settings
+        wheelVolume = self.wheelVolume,
         carVolume = self.carVolume,
         aircraftVolume = self.aircraftVolume,
         explosionVolume = self.explosionVolume,
@@ -232,6 +234,7 @@ function Config:Load()
     data = self:CheckVersion( data )
 
     -- Audio settings
+    SetNumber( self, "wheelVolume", data.wheelVolume, 0, 1, self.wheelVolume )
     SetNumber( self, "carVolume", data.carVolume, 0, 1, self.carVolume )
     SetNumber( self, "aircraftVolume", data.aircraftVolume, 0, 1, self.aircraftVolume )
     SetNumber( self, "explosionVolume", data.explosionVolume, 0, 1, self.explosionVolume )
@@ -840,6 +843,11 @@ function Config:OpenFrame()
     local panelAudio = frame:AddTab( "styledstrike/icons/speaker.png", L"settings.audio" )
 
     CreateHeader( panelAudio, L"settings.audio", 0 )
+
+    CreateSlider( panelAudio, "Wheel Sounds", self.wheelVolume, 0, 1, 1, function( value )
+        self.wheelVolume = value
+        self:Save()
+    end )
 
     CreateSlider( panelAudio, L"audio.car_volume", self.carVolume, 0, 1, 1, function( value )
         self.carVolume = value

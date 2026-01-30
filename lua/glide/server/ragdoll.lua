@@ -67,8 +67,8 @@ do
         if not spawnData then return end
 
         ply.GlideSpawnData = nil
-        ply:SetHealth( spawnData.health )
-        ply:SetArmor( spawnData.armor )
+        -- ply:SetHealth( spawnData.health )
+        -- ply:SetArmor( spawnData.armor )
 
         if spawnData.god then
             ply:GodEnable()

@@ -71,6 +71,7 @@ function Config:Reset()
     self.autoHeadlightOff = true
     self.autoTurnOffLights = true
     self.autoTurnOnEngine = true
+    self.autoTurnOffEngine = true
     self.enableTips = true
 end
 
@@ -180,6 +181,7 @@ function Config:Save( immediate )
         autoHeadlightOff = self.autoHeadlightOff,
         autoTurnOffLights = self.autoTurnOffLights,
         autoTurnOnEngine = self.autoTurnOnEngine,
+        autoTurnOffEngine = self.autoTurnOffEngine,
         enableTips = self.enableTips,
 
         -- Group-to-action-to-button dictionary
@@ -299,6 +301,7 @@ function Config:Load()
     LoadBool( "autoHeadlightOff", true )
     LoadBool( "autoTurnOffLights", true )
     LoadBool( "autoTurnOnEngine", true )
+    LoadBool( "autoTurnOffEngine", true )
     LoadBool( "enableTips", true )
 
     -- Group-to-action-to-button dictionary
@@ -343,6 +346,7 @@ function Config:TransmitInputSettings( immediate )
         -- Misc. settings
         autoTurnOffLights = self.autoTurnOffLights,
         autoTurnOnEngine = self.autoTurnOnEngine,
+        autoTurnOffEngine = self.autoTurnOffEngine,
 
         -- Action-key dictionary
         binds = self.binds
@@ -844,7 +848,7 @@ function Config:OpenFrame()
 
     CreateHeader( panelAudio, L"settings.audio", 0 )
 
-    CreateSlider( panelAudio, "Wheel Sounds", self.wheelVolume, 0, 1, 1, function( value )
+    CreateSlider( panelAudio, L"audio.wheel_volume", self.wheelVolume, 0, 1, 1, function( value )
         self.wheelVolume = value
         self:Save()
     end )
@@ -1003,6 +1007,12 @@ function Config:OpenFrame()
 
     CreateToggle( panelMisc, L"misc.turn_on_engine", self.autoTurnOnEngine, function( value )
         self.autoTurnOnEngine = value
+        self:Save()
+        self:TransmitInputSettings()
+    end )
+
+    CreateToggle( panelMisc, L"misc.turn_off_engine", self.autoTurnOffEngine, function( value )
+        self.autoTurnOffEngine = value
         self:Save()
         self:TransmitInputSettings()
     end )

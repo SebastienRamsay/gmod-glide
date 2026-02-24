@@ -49,6 +49,7 @@ do
             manualGearShifting = data.manualGearShifting == true,
             autoTurnOffLights = data.autoTurnOffLights == true,
             autoTurnOnEngine = data.autoTurnOnEngine == true,
+            autoTurnOffEngine = data.autoTurnOffEngine == true,
             mouseFlyMode = math.Round( Glide.ValidateNumber( data.mouseFlyMode, 0, 2, 0 ) ),
             mouseSteerMode = math.Round( Glide.ValidateNumber( data.mouseSteerMode, 0, 2, 0 ) ),
             throttleModifierMode = math.Round( Glide.ValidateNumber( data.throttleModifierMode, 0, 2, 0 ) ),
@@ -106,6 +107,7 @@ do
             vehicle.inputManualShift = settings.manualGearShifting
             vehicle.autoTurnOffLights = settings.autoTurnOffLights
             vehicle.autoTurnOnEngine = settings.autoTurnOnEngine
+            vehicle.autoTurnOffEngine = settings.autoTurnOffEngine
             vehicle.inputThrottleModifierMode = settings.throttleModifierMode
             vehicle:ResetInputs( 1 )
         end

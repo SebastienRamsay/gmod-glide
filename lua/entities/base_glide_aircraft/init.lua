@@ -42,7 +42,7 @@ end
 function ENT:OnDriverExit()
     local keepOn = IsValid( self.lastDriver ) and self.lastDriver:KeyDown( IN_WALK )
 
-    if not self.hasTheDriverBeenRagdolled and not keepOn then
+    if not self.hasTheDriverBeenRagdolled and not keepOn and self.autoTurnOffEngine then
         self:TurnOff()
     end
 end

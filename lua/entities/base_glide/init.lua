@@ -120,6 +120,7 @@ function ENT:Initialize()
     self.inputManualShift = false   -- User manual gear shifting setting
     self.autoTurnOffLights = false  -- User "turn off headlights" setting
     self.autoTurnOnEngine = true
+    self.autoTurnOffEngine = true
     self.inputThrottleModifierMode = 0  -- User throttle modifier setting
     self.inputThrottleModifierToggle = false
 

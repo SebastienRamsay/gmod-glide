@@ -203,7 +203,9 @@ end
 function ENT:TurnOn()
     BaseClass.TurnOn( self )
 
-    self:SetGear( 0 )
+    if not self.inputManualShift then
+        self:SetGear( 0 )
+    end
     self:SetFlywheelRPM( 0 )
 end
 
@@ -212,7 +214,9 @@ function ENT:TurnOff()
     BaseClass.TurnOff( self )
 
     self:SetIsHonking( false )
-    self:SetGear( 0 )
+    if not self.inputManualShift then
+        self:SetGear( 0 )
+    end
     self.startupTimer = nil
 
     self.clutch = 1
